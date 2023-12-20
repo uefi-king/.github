@@ -4,7 +4,7 @@
 
 1. Clone both `edk2` and `linux` repositories to your local environment.
 
-2. Build them.
+2. Build them. Default config is fine.
 
 3. Build a `initramfs.img` as the rootfs for your Linux, reference is [here](https://gist.github.com/chrisdone/02e165a0004be33734ac2334f215380e). (No need to read the whole guide, just segments about building the initramfs.)
 
