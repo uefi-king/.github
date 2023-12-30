@@ -27,6 +27,7 @@
     
     cp $LINUX_DIR/arch/x86/boot/bzImage hda-contents/linux.efi
     cp $ROOTFS_DIR/initramfs.img        hda-contents/initramfs.img
+    cp $BUILDIR/FV/OVMF.fd              hda-contents/flash.img
     
     qemu-system-x86_64 \
         -m 2048 \
@@ -35,6 +36,7 @@
         -cpu host \
         -drive file=fat:rw:hda-contents,format=raw \
         -drive file=fat:rw:$BUILDIR/X64,id=fat32,format=raw \
+        -drive file=hda-contents/flash.img,format=raw,if=pflash \
         -debugcon file:"ovmf-boot.log" \
         -global isa-debugcon.iobase=0x402 \
         -global ICH9-LPC.disable_s3=1 \
