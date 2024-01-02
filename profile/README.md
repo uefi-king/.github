@@ -27,12 +27,15 @@
     
     cp $LINUX_DIR/arch/x86/boot/bzImage hda-contents/linux.efi
     cp $ROOTFS_DIR/initramfs.img        hda-contents/initramfs.img
-    cp $BUILDIR/FV/OVMF.fd              hda-contents/flash.img
+    if [ "$1" = "--clear-flash" ]; then
+        cp $BUILDIR/FV/OVMF.fd          hda-contents/flash.img
+    fi
+    
+    rm $BUILDIR/X64/*.debug >/dev/null
     
     qemu-system-x86_64 \
         -m 2048 \
         -net none \
-        --bios $BUILDIR/FV/OVMF.fd \
         -cpu host \
         -drive file=fat:rw:hda-contents,format=raw \
         -drive file=fat:rw:$BUILDIR/X64,id=fat32,format=raw \
@@ -54,5 +57,12 @@
 ## Try runtime service
 
 ```shell
-$> cat /sys/firmware/efi/uptime
+host> . ./RunQemu.sh --clear-flash
+qemu> ehco "hello flash" > /sys/firmware/efi/flash_encrypted
+qemu> head -n 1 /sys/firmware/efi/flash_encrypted
+# ----- reboot -----
+host> . ./RunQemu.sh
+qemu> head -n 1 /sys/firmware/efi/flash_encrypted
+qemu> echo "hello raw flash" > /sys/firmware/efi/flash
+qemu> head -n 1 /sys/firmware/efi/flash
 ```
